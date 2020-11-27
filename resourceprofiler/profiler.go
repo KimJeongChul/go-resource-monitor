@@ -1,9 +1,11 @@
 package resourceprofiler
 
 import (
+	"encoding/json"
 	"strconv"
 	"time"
 
+	"github.com/KimJeongChul/go-resource-monitor/broker"
 	cerror "github.com/KimJeongChul/go-resource-monitor/error"
 	"github.com/KimJeongChul/go-resource-monitor/logger"
 	"github.com/shirou/gopsutil/v3/cpu"
@@ -17,12 +19,14 @@ const packageName = "resourceprofiler"
 // ResourceProfiler
 type ResourceProfiler struct {
 	period int
+	broker *broker.Broker
 }
 
 // New Create ResourceProfiler
-func New(period int) *ResourceProfiler {
+func New(period int, broker *broker.Broker) *ResourceProfiler {
 	rp := &ResourceProfiler{
 		period: period,
+		broker: broker,
 	}
 	return rp
 }
@@ -68,6 +72,18 @@ func (r ResourceProfiler) Monitor() {
 
 			exRx = curRx
 			exTx = curTx
+
+			msgUpdateResource, err := json.Marshal(map[string]string{
+				"method": "updateResource",
+				"cpu":    cpuUsage,
+				"memory": memoryUsage,
+				"disk":   diskUsage,
+				"rx":     rxUsage,
+				"tx":     txUsage,
+			})
+			if err == nil {
+				r.broker.Messages <- msgUpdateResource
+			}
 		}
 	}
 }

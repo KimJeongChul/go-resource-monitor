@@ -4,11 +4,15 @@ import (
 	"encoding/json"
 	"flag"
 	"log"
+	"net/http"
 	"os"
 
+	"github.com/KimJeongChul/go-resource-monitor/broker"
+	"github.com/KimJeongChul/go-resource-monitor/dashboard"
 	cerror "github.com/KimJeongChul/go-resource-monitor/error"
 	"github.com/KimJeongChul/go-resource-monitor/logger"
 	"github.com/KimJeongChul/go-resource-monitor/resourceprofiler"
+	"github.com/go-chi/chi"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 )
 
@@ -60,7 +64,32 @@ func main() {
 	}
 	log.SetOutput(rlLogger)
 
+	// SSE(Server Sent Event) Broker
+	broker := &broker.Broker{
+		make(map[chan string]bool),
+		make(chan (chan string)),
+		make(chan (chan string)),
+		make(chan []byte),
+	}
+	broker.Start()
+
 	// Create ResourceProfiler
-	rp := resourceprofiler.New(config.Period)
-	rp.Monitor()
+	rp := resourceprofiler.New(config.Period, broker)
+	go rp.Monitor()
+
+	// Router
+	router := chi.NewRouter()
+	router.Get("/", dashboard.Web)
+	router.Handle("/js/*", http.StripPrefix("/js/", http.FileServer(http.Dir("static/js"))))
+	router.Handle("/css/*", http.StripPrefix("/css/", http.FileServer(http.Dir("static/css"))))
+	router.Handle("/listen/", broker)
+
+	// WebServer
+	srv := &http.Server{
+		Addr:    ":" + config.Port,
+		Handler: router,
+	}
+
+	// WebServer Listen and Serve
+	panic(srv.ListenAndServe())
 }

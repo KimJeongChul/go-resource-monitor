@@ -1,4 +1,5 @@
 {
+    "port": "8080",
     "period": 10,
     "logPath": "./log"
 }

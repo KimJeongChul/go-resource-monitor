@@ -4,9 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Resource Profiler</title>
+    <title>Resource Monitor</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <script src="/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 </head>
 
@@ -148,9 +149,10 @@
 
             <section class="content-header">
                 <center>
-                <h1>
-                    Resource Profiler
+                <h1 class="header-title">
+                    Resource Monitor
                 </h1>
+                <h4><a href="https://github.com/KimJeongChul/go-resource-monitor">KimJeongChul/go-resource-monitor</a></h4>
                 </center>
                 <ol class="breadcrumb">
                     <li>Dashboard</li>
@@ -158,9 +160,8 @@
             </section>
             <section class="content">
                 <div>
-                    <!-- STT API 요청 관련 그래프 시작 -->
                     <div class="row">
-                        <!-- STT API 요청 현황 그래프 -->
+                        <!-- CPU Resource Graph -->
                         <div class="col-md-6 ">
                             <div class="box box-">
                                 <div class="box-body" style="overflow-x: scroll;overflow-y: hidden;">
@@ -192,7 +193,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- STT API 오류 현황 그래프 -->
+                        <!-- Memory Resource Graph -->
                         <div class="col-md-6 ">
                             <div class="box box-">
                                 <div class="box-body" style="overflow-x: scroll;overflow-y: hidden;">
@@ -257,7 +258,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- 전체 노드별 메모리 자원 사용량 그래프 -->
+                        <!-- Network Resource Graph -->
                         <div class="col-md-6 ">
                             <div class="box box-">
                                 <div class="box-body" style="overflow-x: scroll;overflow-y: hidden;">
